@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>سلة التسوق | متجر DRS BOUTIQUE</title>
+	<link rel="stylesheet" href="style.css">
+	<script defer src="app.js"></script>
+</head>
+<body>
+	<header>
+		<div class="container">
+    <h1>متجر DRS BOUTIQUE</h1>
+    <button class="nav-toggle" aria-label="القائمة" style="display:none;">
+      <span style="font-size:1.7em;">&#9776;</span>
+    </button>
+    <nav>
+      <ul>
+        <li><a href="index.html">الرئيسية</a></li>
+        <li><a href="catalog.html">المنتجات</a></li>
+        <li><a href="cart.html" class="active">السلة</a></li>
+        <li><a href="#contact">تواصل معنا</a></li>
+      </ul>
+    </nav>
+		</div>
+	</header>
+	<main>
+		<section class="cart-section">
+			<h2>سلة التسوق</h2>
+			<div class="cart-table-container">
+				<div class="cart-list">
+					<div class="cart-item-card">
+						<img src="photo_2025-09-29_22-03-54.jpg" alt="منتج" class="cart-item-img">
+						<div class="cart-item-details">
+							<!-- تم إزالة اسم المنتج بناءً على طلب المستخدم -->
+							<div class="cart-item-meta">
+								<span>المقاس: 
+									<select class="cart-size-select">
+										<option value="S">S</option>
+										<option value="M" selected>M</option>
+										<option value="L">L</option>
+										<option value="XL">XL</option>
+									</select>
+								</span>
+								<span>اللون: 
+									<select class="cart-color-select">
+										<option value="وردي" selected>وردي</option>
+										<option value="أزرق">أزرق</option>
+										<option value="أسود">أسود</option>
+										<option value="رمادي">رمادي</option>
+									</select>
+								</span>
+							</div>
+							<div class="cart-item-prices">
+								<span class="cart-item-old-price">120 د.ل</span>
+								<span class="cart-item-new-price">99 د.ل</span>
+							</div>
+							<div class="cart-item-qty">الكمية: <input type="number" value="1" min="1"></div>
+							<div class="cart-item-total">الإجمالي: 99 د.ل</div>
+						</div>
+						<button class="cart-item-remove">&#10006;</button>
+					</div>
+					<div class="cart-item-card">
+						<img src="photo_2025-09-29_22-03-56.jpg" alt="منتج" class="cart-item-img">
+						<div class="cart-item-details">
+							<!-- تم إزالة اسم المنتج بناءً على طلب المستخدم -->
+							<div class="cart-item-meta">
+								<span>المقاس: 
+									<select class="cart-size-select">
+										<option value="S">S</option>
+										<option value="M">M</option>
+										<option value="L" selected>L</option>
+										<option value="XL">XL</option>
+									</select>
+								</span>
+								<span>اللون: 
+									<select class="cart-color-select">
+										<option value="وردي">وردي</option>
+										<option value="أزرق" selected>أزرق</option>
+										<option value="أسود">أسود</option>
+										<option value="رمادي">رمادي</option>
+									</select>
+								</span>
+							</div>
+							<div class="cart-item-prices">
+								<span class="cart-item-old-price">100 د.ل</span>
+								<span class="cart-item-new-price">80 د.ل</span>
+							</div>
+							<div class="cart-item-qty">الكمية: <input type="number" value="2" min="1"></div>
+							<div class="cart-item-total">الإجمالي: 160 د.ل</div>
+						</div>
+						<button class="cart-item-remove">&#10006;</button>
+					</div>
+				</div>
+					 <!-- مربع إجمالي متطور سيتم تحديثه من جافاسكربت -->
+					 <div id="cart-summary-advanced" class="cart-summary-advanced">
+						 <span class="cart-summary-icon">🛒</span>
+						 <span class="cart-summary-label">عدد المنتجات:</span>
+						 <span class="cart-summary-count">0</span>
+						 <span class="cart-summary-label" style="margin-right:22px;">الإجمالي الكلي:</span>
+						 <span class="cart-summary-total">0 د.ل</span>
+					 </div>
+				</div>
+			</div>
+			<div style="text-align:center; margin: 18px 0 0 0; position:relative;">
+				<button class="share-cart-btn" id="shareCartBtn">
+					<span style="font-size:1.3em;vertical-align:middle;">&#128257;</span>
+					مشاركة السلة
+				</button>
+				<div id="shareMenu" style="display:none; position:absolute; right:0; left:0; margin:auto; top:55px; background:#fff3e0; border-radius:16px; box-shadow:0 2px 16px rgba(62,39,35,0.13); padding:18px 18px 10px 18px; z-index:10; max-width:340px;">
+					<button class="share-menu-item" id="copyCartLink" style="width:100%;margin-bottom:10px;">نسخ رابط السلة</button>
+					<a class="share-menu-item" id="waShare" href="#" target="_blank" style="display:block;margin-bottom:8px;">مشاركة عبر واتساب</a>
+					<a class="share-menu-item" id="snapShare" href="#" target="_blank" style="display:block;margin-bottom:8px;">مشاركة عبر سناب شات</a>
+					<a class="share-menu-item" id="twShare" href="#" target="_blank" style="display:block;margin-bottom:8px;">مشاركة عبر تويتر</a>
+					<a class="share-menu-item" id="fbShare" href="#" target="_blank" style="display:block;">مشاركة عبر فيسبوك</a>
+				</div>
+			</div>
+		</section>
+	</main>
+	<footer>
+		<div class="container">
+			<p>&copy; 2025 متجر DRS BOUTIQUE. جميع الحقوق محفوظة.</p>
+		</div>
+	</footer>
+</body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	// منطق إظهار/إخفاء قائمة التنقل على الجوال
+	const navToggle = document.querySelector('.nav-toggle');
+	const nav = document.querySelector('nav');
+	const navUl = nav?.querySelector('ul');
+	function handleResize() {
+		if (window.innerWidth <= 700) {
+			navToggle.style.display = 'block';
+			navUl.style.display = 'none';
+		} else {
+			navToggle.style.display = 'none';
+			navUl.style.display = 'flex';
+		}
+	}
+	navToggle?.addEventListener('click', function() {
+		if (navUl.style.display === 'block') {
+			navUl.style.display = 'none';
+		} else {
+			navUl.style.display = 'block';
+			navUl.style.flexDirection = 'column';
+			navUl.style.background = '#222';
+			navUl.style.position = 'absolute';
+			navUl.style.top = '60px';
+			navUl.style.right = '10px';
+			navUl.style.left = '10px';
+			navUl.style.borderRadius = '12px';
+			navUl.style.boxShadow = '0 2px 16px rgba(0,0,0,0.18)';
+			navUl.style.zIndex = '100';
+			navUl.style.padding = '12px 0';
+			navUl.style.gap = '10px';
+		}
+	});
+	window.addEventListener('resize', handleResize);
+	handleResize();
+	const shareBtn = document.getElementById('shareCartBtn');
+	const shareMenu = document.getElementById('shareMenu');
+	const copyBtn = document.getElementById('copyCartLink');
+	const waShare = document.getElementById('waShare');
+	const snapShare = document.getElementById('snapShare');
+	const twShare = document.getElementById('twShare');
+	const fbShare = document.getElementById('fbShare');
+	const cartUrl = window.location.origin + window.location.pathname;
+
+	shareBtn.addEventListener('click', function(e) {
+		e.preventDefault();
+		shareMenu.style.display = shareMenu.style.display === 'block' ? 'none' : 'block';
+	});
+	document.addEventListener('click', function(e) {
+		if (!shareBtn.contains(e.target) && !shareMenu.contains(e.target)) {
+			shareMenu.style.display = 'none';
+		}
+	});
+	copyBtn.addEventListener('click', function() {
+		navigator.clipboard.writeText(cartUrl);
+		copyBtn.textContent = 'تم النسخ!';
+		setTimeout(()=>{copyBtn.textContent = 'نسخ رابط السلة';}, 1500);
+	});
+	waShare.href = 'https://wa.me/?text=' + encodeURIComponent('سلة مشترياتي: ' + cartUrl);
+	snapShare.href = 'https://www.snapchat.com/scan?attachmentUrl=' + encodeURIComponent(cartUrl);
+	twShare.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent('سلة مشترياتي: ' + cartUrl);
+	fbShare.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(cartUrl);
+});
+</script>
+</html>
