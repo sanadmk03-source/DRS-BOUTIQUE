@@ -1,16 +1,30 @@
 <?php
-include 'db.php'; // استدعاء الاتصال بالقاعدة
+include 'db.php';
 
-$cartData = $_POST['cart'] ?? '';
+// استخدم JSON فقط من body وليس POST مباشرة
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
+$cartData = $data['cart'] ?? '';
 
-if($cartData != '') {
-    // هنا نفترض عندك جدول اسمه cart_items
-    $sql = "INSERT INTO cart_items (data) VALUES (?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $cartData);
+// تحقق من صحة البيانات (مثال: كل منتج يجب أن يحتوي على سعر رقمي)
+function isValidCart($cart) {
+    if (!is_array($cart)) return false;
+    foreach ($cart as $item) {
+        if (!isset($item['newPrice']) || !is_numeric($item['newPrice'])) return false;
+        if (!isset($item['qty']) || !is_numeric($item['qty'])) return false;
+    }
+    return true;
+}
+
+if($cartData && isValidCart($cartData)) {
+    $stmt = $conn->prepare("INSERT INTO cart_items (data) VALUES (?)");
+    $json = json_encode($cartData, JSON_UNESCAPED_UNICODE);
+    $stmt->bind_param("s", $json);
     $stmt->execute();
-    echo "تم حفظ السلة بنجاح!";
+    $id = $stmt->insert_id;
+    $stmt->close();
+    echo json_encode(['success'=>true, 'id'=>$id]);
 } else {
-    echo "السلة فارغة";
+    echo json_encode(['success'=>false, 'error'=>'سلة غير صالحة']);
 }
 ?>

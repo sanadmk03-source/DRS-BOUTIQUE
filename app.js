@@ -175,10 +175,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- إنشاء رابط المشاركة (مشفر فقط) ---
   function getCartShareLink() {
-    const items = JSON.parse(localStorage.getItem("drs_cart")||"[]");
+    // إذا كان هناك cartid في الرابط (قاعدة بيانات)
+    const params = new URLSearchParams(window.location.search);
+    const cartid = params.get('cartid');
+    if (cartid) {
+      return window.location.origin + window.location.pathname + '?cartid=' + cartid;
+    }
+    // إذا لا يوجد cartid، استخدم localStorage (رابط مشفر)
+    const items = JSON.parse(localStorage.getItem('drs_cart') || '[]');
     if (!items.length) return window.location.origin + window.location.pathname;
-    const encoded = btoa(JSON.stringify(items));
-    return window.location.origin + window.location.pathname + "?cart=" + encoded;
+    return window.location.origin + window.location.pathname + '?cart=' + encodeCart(items);
   }
 
   function updateCartShareLink() {
@@ -192,19 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (copyCartBtn) {
     copyCartBtn.onclick = () => {
-      const items = JSON.parse(localStorage.getItem("drs_cart") || "[]");
-      if (!items.length) {
-        alert("السلة فارغة!");
-        return;
-      }
-      let encoded = '';
-      try {
-        encoded = btoa(JSON.stringify(items));
-      } catch(e) {
-        alert("حدث خطأ في ترميز السلة!\n" + e);
-        return;
-      }
-      const link = window.location.origin + window.location.pathname + "?cart=" + encoded;
+      const link = getCartShareLink();
       navigator.clipboard.writeText(link).then(() => alert("تم نسخ الرابط بنجاح ✅"));
     };
   }
@@ -215,6 +209,66 @@ document.addEventListener("DOMContentLoaded", () => {
       loadCartFromStorage();
     };
   }
+
+  // --- مشاركة السلة عبر قاعدة بيانات (رابط id) ---
+  const shareDbBtn = document.getElementById("shareCartDbBtn");
+  const copyDbBtn = document.getElementById("copyCartDbLink");
+  const dbShareLinkInput = document.getElementById("cartDbShareLink");
+
+  if (shareDbBtn && copyDbBtn && dbShareLinkInput) {
+    shareDbBtn.onclick = async function() {
+      const cart = JSON.parse(localStorage.getItem('drs_cart') || '[]');
+      if (!cart.length) {
+        alert('السلة فارغة!');
+        return;
+      }
+      shareDbBtn.disabled = true;
+      shareDbBtn.textContent = '...جاري إنشاء الرابط';
+      try {
+        const res = await fetch('save_cart.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({cart})
+        });
+        const data = await res.json();
+        if (data.success && data.id) {
+          const link = window.location.origin + window.location.pathname + '?cartid=' + data.id;
+          dbShareLinkInput.value = link;
+          dbShareLinkInput.style.display = 'block';
+          copyDbBtn.style.display = 'inline-block';
+        } else {
+          alert('حدث خطأ أثناء إنشاء الرابط');
+        }
+      } catch(e) {
+        alert('تعذر الاتصال بالخادم');
+      }
+      shareDbBtn.disabled = false;
+      shareDbBtn.textContent = 'مشاركة السلة (رابط قاعدة بيانات)';
+    };
+    copyDbBtn.onclick = function() {
+      if (dbShareLinkInput.value) {
+        navigator.clipboard.writeText(dbShareLinkInput.value);
+        copyDbBtn.textContent = 'تم النسخ!';
+        setTimeout(() => (copyDbBtn.textContent = 'نسخ الرابط'), 1500);
+      }
+    };
+  }
+
+  // تحميل السلة من قاعدة البيانات إذا كان cartid في الرابط
+  (function loadCartFromDb() {
+    const params = new URLSearchParams(window.location.search);
+    const cartid = params.get('cartid');
+    if (cartid) {
+      fetch('get_cart.php?id=' + encodeURIComponent(cartid))
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && Array.isArray(data.cart)) {
+            localStorage.setItem('drs_cart', JSON.stringify(data.cart));
+            loadCartFromStorage();
+          }
+        });
+    }
+  })();
 
   // --- دعم القائمة للجوال ---
   const navToggle = document.querySelector(".nav-toggle");
@@ -234,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-// === تفعيل نافذة المنتج المنبثقة في صفحة الكتالوج ===
+// === تفعيل نافذة المنتج المنبثقة في صفحة الكتالوج (متوافق مع جميع المتصفحات والسيرفرات) ===
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById('product-modal');
   const modalImg = document.getElementById('modal-img');
@@ -245,36 +299,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // فتح المودال عند الضغط على أي كرت منتج
   document.querySelectorAll('.product-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const img = card.querySelector('img');
-      modalImg.src = img.src;
-      modalImg.alt = img.alt;
+    card.addEventListener('click', function(e) {
+      // تجاهل الضغط على زر "أضف إلى السلة" داخل البطاقة
+      if (e.target.closest('button')) return;
+      var img = card.querySelector('img');
+      modalImg.src = img.getAttribute('src');
+      modalImg.alt = img.getAttribute('alt');
       modal.style.display = 'block';
       // حفظ بيانات المنتج في الفورم
       modalForm.dataset.oldPrice = card.querySelector('.old-price').textContent;
       modalForm.dataset.newPrice = card.querySelector('.new-price').textContent;
-      modalForm.dataset.productName = img.alt;
+      modalForm.dataset.productName = img.getAttribute('alt');
     });
   });
 
   // إغلاق المودال
-  closeModal.addEventListener('click', () => {
+  closeModal.addEventListener('click', function() {
     modal.style.display = 'none';
   });
-  window.addEventListener('click', e => {
+  window.addEventListener('click', function(e) {
     if (e.target === modal) modal.style.display = 'none';
   });
 
   // إضافة المنتج للسلة
-  modalForm.addEventListener('submit', e => {
+  modalForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    const size = sizeSelect.value;
-    const color = colorSelect.value;
+    var size = sizeSelect.value;
+    var color = colorSelect.value;
     if (!size || !color) {
       alert('يرجى اختيار المقاس واللون');
       return;
     }
-    const product = {
+    var product = {
       img: modalImg.src,
       size: size,
       color: color,
@@ -282,12 +338,14 @@ document.addEventListener("DOMContentLoaded", () => {
       newPrice: modalForm.dataset.newPrice,
       qty: 1
     };
-    let cart = [];
+    var cart = [];
     try {
       cart = JSON.parse(localStorage.getItem('drs_cart') || '[]');
     } catch(e) { cart = []; }
     // إذا المنتج نفسه موجود (نفس الصورة/المقاس/اللون) زد الكمية فقط
-    const existing = cart.find(p => p.img === product.img && p.size === product.size && p.color === product.color);
+    var existing = cart.find(function(p) {
+      return p.img === product.img && p.size === product.size && p.color === product.color;
+    });
     if (existing) {
       existing.qty = (parseInt(existing.qty) || 1) + 1;
     } else {
@@ -299,3 +357,11 @@ document.addEventListener("DOMContentLoaded", () => {
     modalForm.reset();
   });
 });
+
+// دوال ترميز وفك ترميز السلة تدعم العربية بشكل كامل
+function encodeCart(items) {
+  return btoa(unescape(encodeURIComponent(JSON.stringify(items))));
+}
+function decodeCart(str) {
+  return JSON.parse(decodeURIComponent(escape(atob(str))));
+}
