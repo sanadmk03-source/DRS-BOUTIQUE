@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+	<meta charset="UTF-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>منتجاتنا | متجر DRS BOUTIQUE</title>
+	<link rel="stylesheet" href="style.css">
+	<script defer src="app.js"></script>
+</head>
+<body>
+	<header>
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:18px;">
+        <h1 style="font-family:'Cairo',sans-serif;font-size:2.1em;letter-spacing:2px;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;padding:6px 18px;border-radius:16px;box-shadow:0 2px 12px #ffe0b2;">متجر DRS BOUTIQUE</h1>
+        <nav style="flex:1;">
+            <ul style="display:flex;justify-content:space-between;align-items:center;gap:32px;list-style:none;padding:0;margin:0;">
+                <div style="display:flex;gap:18px;">
+                    <li><a href="index.html" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">الرئيسية</a></li>
+                    <li><a href="catalog.html" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">المنتجات</a></li>
+                </div>
+                <div style="display:flex;gap:18px;">
+                    <li><a href="cart.html" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">السلة</a></li>
+                    <li><a href="#contact" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">تواصل معنا</a></li>
+                </div>
+            </ul>
+        </nav>
+    </div>
+</header>
+	<main>
+		<section class="products-section">
+			<h2>منتجاتنا</h2>
+			<div class="products-grid">
+            <!-- نافذة منبثقة لاختيار المقاس واللون -->
+            <div id="product-modal" class="modal" style="display:none;">
+                <div class="modal-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                    <span class="close-modal">&times;</span>
+                    <img id="modal-img" src="" alt="صورة المنتج" style="width:120px;height:140px;border-radius:10px;display:block;margin:0 auto 15px auto;">
+                    <form id="modal-form" style="display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:350px;">
+                        <div class="modal-fields-row" style="display:flex;flex-direction:row;justify-content:center;align-items:center;gap:18px;width:100%;flex-wrap:wrap;text-align:center;">
+                            <div style="flex:1;min-width:100px;max-width:120px;display:flex;flex-direction:column;align-items:center;">
+                                <label for="size-select" style="font-weight:bold;margin-bottom:6px;text-align:center;">المقاس:</label>
+                                <select id="size-select" required style="width:100%;padding:6px 8px;border-radius:8px;min-width:80px;max-width:120px;text-align:center;">
+                                    <option value="">اختر المقاس</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                </select>
+                            </div>
+                            <div style="flex:1;min-width:100px;max-width:120px;display:flex;flex-direction:column;align-items:center;">
+                                <label for="color-select" style="font-weight:bold;margin-bottom:6px;text-align:center;">اللون:</label>
+                                <select id="color-select" required style="width:100%;padding:6px 8px;border-radius:8px;min-width:80px;max-width:120px;text-align:center;">
+                                    <option value="">اختر اللون</option>
+                                    <option value="وردي">وردي</option>
+                                    <option value="أزرق">أزرق</option>
+                                    <option value="أسود">أسود</option>
+                                    <option value="رمادي">رمادي</option>
+                                </select>
+                            </div>
+                            <div style="flex:1;min-width:100px;max-width:120px;display:flex;flex-direction:column;align-items:center;">
+                                <label for="qty-input" style="font-weight:bold;margin-bottom:6px;text-align:center;">الكمية:</label>
+                                <input id="qty-input" type="number" min="1" value="1" style="width:100%;padding:6px 8px;border-radius:8px;text-align:center;min-width:80px;max-width:120px;">
+                            </div>
+                        </div>
+                        <button type="submit" class="add-to-cart" style="margin:0 auto;">أضف إلى السلة</button>
+                    </form>
+                    <style>
+                    @media (max-width: 600px) {
+                        #product-modal .modal-content { max-width:98vw; }
+                        #product-modal form { max-width:98vw; }
+                        .modal-fields-row { flex-direction:column; gap:10px; }
+                        .modal-fields-row > div { min-width:100px; max-width:100%; }
+                    }
+                    </style>
+                </div>
+            </div>
+				<div class="product-card">
+					<span class="discount-badge">خصم 30%</span>
+					<img src="photo_2025-09-29_22-03-57.jpg" alt="فستان نسائي صيفي">
+					<div class="product-prices">
+						<span class="old-price">150 د.ل</span>
+						<span class="new-price">99 د.ل</span>
+					</div>
+					<button class="add-to-cart" style="display:none;">أضف إلى السلة</button>
+				</div>
+				<div class="product-card">
+					<span class="discount-badge">خصم 30%</span>
+					<img src="photo_2025-09-29_22-03-56.jpg" alt="قميص رجالي كلاسيكي">
+					<div class="product-prices">
+						<span class="old-price">120 د.ل</span>
+						<span class="new-price">80 د.ل</span>
+					</div>
+					<button class="add-to-cart" style="display:none;">أضف إلى السلة</button>
+				</div>
+				   <div class="product-card">
+					   <span class="discount-badge">خصم 30%</span>
+					   <img src="pink.jpg" alt="منتج جديد 1">
+					   <div class="product-prices">
+						   <span class="old-price">115 د.ل</span>
+						   <span class="new-price">80 د.ل</span>
+					   </div>
+					   <button class="add-to-cart" style="display:none;">أضف إلى السلة</button>
+				   </div>
+				<div class="product-card">
+					<span class="discount-badge">خصم 30%</span>
+					<img src="photo_2025-09-29_22-03-59.jpg" alt="منتج جديد 2">
+					<div class="product-prices">
+						<span class="old-price">140 د.ل</span>
+						<span class="new-price">98 د.ل</span>
+					</div>
+					<button class="add-to-cart" style="display:none;">أضف إلى السلة</button>
+				</div>
+				<div class="product-card">
+					<span class="discount-badge">خصم 30%</span>
+					<img src="photo_2025-09-29_22-03-54.jpg" alt="تيشيرت شبابي عصري">
+					<div class="product-prices">
+						<span class="old-price">100 د.ل</span>
+						<span class="new-price">65 د.ل</span>
+					</div>
+					<button class="add-to-cart" style="display:none;">أضف إلى السلة</button>
+				</div>
+				<div class="product-card">
+					<span class="discount-badge">خصم 30%</span>
+					<img src="photo_2025-09-29_22-03-53.jpg" alt="بدلة أطفال أنيقة">
+					<div class="product-prices">
+						<span class="old-price">90 د.ل</span>
+						<span class="new-price">55 د.ل</span>
+					</div>
+					<button class="add-to-cart" style="display:none;">أضف إلى السلة</button>
+				</div>
+			</div>
+		</section>
+	</main>
+	<footer>
+		<div class="container">
+			<p>&copy; 2025 متجر DRS BOUTIQUE. جميع الحقوق محفوظة.</p>
+		</div>
+	</footer>
+</body>
+</html>
