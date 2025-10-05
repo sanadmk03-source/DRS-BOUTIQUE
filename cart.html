@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سلة التسوق | متجر DRS BOUTIQUE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:18px;">
+        <h1 style="font-family:'Cairo',sans-serif;font-size:2.1em;letter-spacing:2px;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;padding:6px 18px;border-radius:16px;box-shadow:0 2px 12px #ffe0b2;">متجر DRS BOUTIQUE</h1>
+        <nav style="flex:1;">
+            <ul style="display:flex;justify-content:space-between;align-items:center;gap:32px;list-style:none;padding:0;margin:0;">
+                <div style="display:flex;gap:18px;">
+                    <li><a href="index.html" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">الرئيسية</a></li>
+                    <li><a href="catalog.html" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">المنتجات</a></li>
+                </div>
+                <div style="display:flex;gap:18px;">
+                    <li><a href="cart.html" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">السلة</a></li>
+                    <li><a href="#contact" style="font-size:1.08em;font-weight:bold;padding:8px 18px;border-radius:12px;transition:background 0.2s;background:linear-gradient(90deg,#ffb74d 60%,#ff9800 100%);color:#6d4c00;box-shadow:0 2px 8px #ffe0b2;">تواصل معنا</a></li>
+                </div>
+            </ul>
+        </nav>
+    </div>
+  </header>
+  <main>
+    <section class="cart-section">
+      <h2>سلة التسوق</h2>
+      <div class="cart-table-container">
+        <div class="cart-list"></div>
+        <div id="cart-summary-advanced" class="cart-summary-advanced">
+          <span class="cart-summary-icon">🛒</span>
+          <span class="cart-summary-label">عدد المنتجات:</span>
+          <span class="cart-summary-count">0</span>
+          <span class="cart-summary-label" style="margin-right:22px;">الإجمالي الكلي:</span>
+          <span class="cart-summary-total">0 د.ل</span>
+          <button id="clear-cart-btn" class="checkout-btn" style="margin-right:18px;">تفريغ السلة</button>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin:18px 0; position:relative;">
+        <button class="share-cart-btn" id="shareCartBtn">
+          <span style="font-size:1.3em;vertical-align:middle;">&#128257;</span>
+          مشاركة السلة
+        </button>
+        <div id="shareMenu" class="share-menu" style="display:none;">
+          <button id="copyCartLink">نسخ رابط السلة</button>
+          <a id="waShare" href="#" target="_blank">مشاركة عبر واتساب</a>
+          <a id="snapShare" href="#" target="_blank">مشاركة عبر سناب شات</a>
+          <a id="twShare" href="#" target="_blank">مشاركة عبر تويتر</a>
+          <a id="fbShare" href="#" target="_blank">مشاركة عبر فيسبوك</a>
+          <hr style="margin:10px 0;">
+          <button id="shareCartDbBtn" style="background:#ffd700;color:#3e2723;padding:8px 18px;border-radius:14px;font-weight:bold;">مشاركة السلة</button>
+          <input id="cartDbShareLink" type="text" readonly style="display:none;width:90%;margin:8px auto 4px auto;padding:6px 8px;border-radius:8px;text-align:center;">
+          <button id="copyCartDbLink" style="display:none;background:#ff9800;color:#fff;padding:6px 14px;border-radius:10px;font-weight:bold;">نسخ الرابط</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 متجر DRS BOUTIQUE. جميع الحقوق محفوظة.</p>
+    </div>
+  </footer>
+
+  <script>
+  // ---------------------- دوال السلة ----------------------
+  function loadCartFromStorage() {
+    const cartList = document.querySelector('.cart-list');
+    let items = [];
+    const params = new URLSearchParams(window.location.search);
+    const sharedCart = params.get("cart");
+    if (sharedCart) {
+      try { items = JSON.parse(atob(sharedCart)); } catch(e){ items = []; }
+    } else {
+      try { items = JSON.parse(localStorage.getItem('drs_cart') || '[]'); } catch(e){ items = []; }
+    }
+
+    cartList.innerHTML = '';
+    if (items.length === 0) {
+      cartList.innerHTML = '<div style="text-align:center;color:#b26a00;font-size:1.1em;margin:30px 0;">سلتك فارغة! ابدأ التسوق الآن.</div>';
+    }
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'cart-item-card';
+      card.innerHTML = `
+        <img src="${item.img}" alt="منتج" class="cart-item-img">
+        <div class="cart-item-details">
+          <div class="cart-item-meta">
+            ${item.size ? `<span>المقاس: 
+              <select class="cart-size-select">
+                <option value="S"${item.size==='S'?' selected':''}>S</option>
+                <option value="M"${item.size==='M'?' selected':''}>M</option>
+                <option value="L"${item.size==='L'?' selected':''}>L</option>
+                <option value="XL"${item.size==='XL'?' selected':''}>XL</option>
+              </select></span>` : ''}
+            ${item.color ? `<span>اللون: 
+              <select class="cart-color-select">
+                <option value="وردي"${item.color==='وردي'?' selected':''}>وردي</option>
+                <option value="أزرق"${item.color==='أزرق'?' selected':''}>أزرق</option>
+                <option value="أسود"${item.color==='أسود'?' selected':''}>أسود</option>
+                <option value="رمادي"${item.color==='رمادي'?' selected':''}>رمادي</option>
+              </select></span>` : ''}
+          </div>
+          <div class="cart-item-prices">
+            <span class="cart-item-old-price">${item.oldPrice} د.ل</span>
+            <span class="cart-item-new-price">${item.newPrice} د.ل</span>
+          </div>
+          <div class="cart-item-qty">الكمية: <input type="number" value="${item.qty}" min="1"></div>
+          <div class="cart-item-total">الإجمالي: ${parseFloat(item.newPrice)*parseInt(item.qty)} د.ل</div>
+        </div>
+        <button class="cart-item-remove">&#10006;</button>
+      `;
+      activateCartCardFeatures(card);
+      cartList.appendChild(card);
+    });
+    updateCartSummary();
+  }
+
+    // زر مشاركة السلة عبر قاعدة البيانات
+    const shareDbBtn = document.getElementById("shareCartDbBtn");
+    const copyDbBtn = document.getElementById("copyCartDbLink");
+    const dbShareLinkInput = document.getElementById("cartDbShareLink");
+
+    if (shareDbBtn && copyDbBtn && dbShareLinkInput) {
+      shareDbBtn.onclick = async function() {
+        const cart = JSON.parse(localStorage.getItem('drs_cart') || '[]');
+        if (!cart.length) {
+          alert('السلة فارغة!');
+          return;
+        }
+        shareDbBtn.disabled = true;
+        shareDbBtn.textContent = '...جاري إنشاء الرابط';
+        try {
+          const res = await fetch('save_cart.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({cart})
+          });
+          const data = await res.json();
+          if (data.success && data.id) {
+            const link = window.location.origin + window.location.pathname + '?cartid=' + data.id;
+            dbShareLinkInput.value = link;
+            dbShareLinkInput.style.display = 'block';
+            copyDbBtn.style.display = 'inline-block';
+          } else {
+            alert('حدث خطأ أثناء إنشاء الرابط');
+          }
+        } catch(e) {
+          alert('تعذر الاتصال بالخادم');
+        }
+        shareDbBtn.disabled = false;
+    shareDbBtn.textContent = 'مشاركة السلة';
+      };
+      copyDbBtn.onclick = function() {
+        if (dbShareLinkInput.value) {
+          navigator.clipboard.writeText(dbShareLinkInput.value);
+          copyDbBtn.textContent = 'تم النسخ!';
+          setTimeout(() => (copyDbBtn.textContent = 'نسخ الرابط'), 1500);
+        }
+      };
+    }
+  function activateCartCardFeatures(card) {
+    const removeBtn = card.querySelector('.cart-item-remove');
+    if (removeBtn) removeBtn.onclick = function(){ card.remove(); saveCartToStorage(); loadCartFromStorage(); };
+
+    const qtyInput = card.querySelector('.cart-item-qty input');
+    const newPriceSpan = card.querySelector('.cart-item-new-price');
+    const totalDiv = card.querySelector('.cart-item-total');
+    if(qtyInput && newPriceSpan && totalDiv){
+      qtyInput.oninput = function(){
+        let qty = parseInt(qtyInput.value);
+        if(isNaN(qty)||qty<1){ qty=1; qtyInput.value=1; }
+        let price = parseFloat(newPriceSpan.textContent) || 0;
+        totalDiv.textContent = 'الإجمالي: ' + (qty*price) + ' د.ل';
+        saveCartToStorage();
+        updateCartSummary();
+      };
+    }
+
+    const sizeSelect = card.querySelector('.cart-size-select');
+    if(sizeSelect) sizeSelect.onchange = function(){ saveCartToStorage(); };
+
+    const colorSelect = card.querySelector('.cart-color-select');
+    const img = card.querySelector('.cart-item-img');
+    if(colorSelect && img){
+      colorSelect.onchange = function(){
+        const colorToImg = { 'وردي':'photo_2025-09-29_22-03-57.jpg', 'أزرق':'photo_2025-09-29_22-03-56.jpg', 'أسود':'photo_2025-09-29_22-03-54.jpg', 'رمادي':'photo_2025-09-29_22-03-53.jpg'};
+        if(colorToImg[colorSelect.value]) img.src=colorToImg[colorSelect.value];
+        saveCartToStorage();
+      };
+    }
+  }
+
+  function saveCartToStorage() {
+    const cartList = document.querySelector('.cart-list');
+    if(!cartList) return;
+    const items=[];
+    cartList.querySelectorAll('.cart-item-card').forEach(card=>{
+      const img = card.querySelector('.cart-item-img')?.src||'';
+      const size = card.querySelector('.cart-size-select')?.value||'';
+      const color = card.querySelector('.cart-color-select')?.value||'';
+      const oldPrice = (card.querySelector('.cart-item-old-price')?.textContent||'').replace(/[^\d.]/g,'');
+      const newPrice = (card.querySelector('.cart-item-new-price')?.textContent||'').replace(/[^\d.]/g,'');
+      const qty = card.querySelector('.cart-item-qty input')?.value||'1';
+      items.push({img,size,color,oldPrice,newPrice,qty});
+    });
+    localStorage.setItem('drs_cart',JSON.stringify(items));
+  }
+
+  function updateCartSummary() {
+    let items=[];
+    try{ items=JSON.parse(localStorage.getItem('drs_cart')||'[]'); } catch(e){ items=[]; }
+    let totalCount=0,totalPrice=0;
+    items.forEach(item=>{
+      const qty=parseInt(item.qty)||0;
+      const price=parseFloat(item.newPrice)||0;
+      totalCount+=qty; totalPrice+=qty*price;
+    });
+    document.querySelector('.cart-summary-count').textContent=totalCount;
+    document.querySelector('.cart-summary-total').textContent=totalPrice+' د.ل';
+  }
+
+  document.getElementById('clear-cart-btn').onclick=function(){
+    localStorage.removeItem('drs_cart'); loadCartFromStorage();
+  };
+
+  // ---------------------- مشاركة السلة ----------------------
+  const shareBtn = document.getElementById('shareCartBtn');
+  const shareMenu = document.getElementById('shareMenu');
+  const copyBtn = document.getElementById('copyCartLink');
+  const waShare = document.getElementById('waShare');
+  const snapShare = document.getElementById('snapShare');
+  const twShare = document.getElementById('twShare');
+  const fbShare = document.getElementById('fbShare');
+  const cartUrl = window.location.origin + window.location.pathname;
+
+  shareBtn.onclick = e => {
+    e.preventDefault();
+    shareMenu.style.display = shareMenu.style.display==='block'?'none':'block';
+  };
+  document.addEventListener('click', e=>{
+    if(!shareBtn.contains(e.target) && !shareMenu.contains(e.target)){
+      shareMenu.style.display='none';
+    }
+  });
+
+  // ---------------------- زر النسخ المحسّن ----------------------
+  copyBtn.onclick = async ()=>{
+    const items = JSON.parse(localStorage.getItem('drs_cart')||'[]');
+    if(items.length===0){ alert("السلة فارغة! أضف منتجات أولاً."); return; }
+    // فلترة البيانات قبل الترميز
+    function filterCartData(arr){
+      return arr.map(item=>{
+        const filtered={};
+        for(const k in item){
+          let v = item[k];
+          if(v===undefined||v===null) continue;
+          if(typeof v==='function') continue;
+          if(typeof v==='object' && !Array.isArray(v)) continue;
+          if(typeof v==='number') v = v.toString();
+          filtered[k]=v;
+        }
+        return filtered;
+      });
+    }
+    let encoded='';
+    try{
+      encoded=btoa(JSON.stringify(filterCartData(items)));
+    }catch(e){
+      // في حال فشل الترميز لأي سبب، يتم نسخ السلة فارغة بدلاً من إظهار خطأ
+      encoded = btoa('[]');
+    }
+    const shareLink = cartUrl + "?cart=" + encoded;
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      alert("تم نسخ الرابط بنجاح!\n" + shareLink);
+    } catch(e) {
+      alert("لم يتم النسخ تلقائياً، انسخ الرابط يدوياً:\n" + shareLink);
+    }
+    // تحديث روابط المشاركة الاجتماعية
+    waShare.href = 'https://wa.me/?text=' + encodeURIComponent('سلة مشترياتي: ' + shareLink);
+    snapShare.href = 'https://www.snapchat.com/scan?attachmentUrl=' + encodeURIComponent(shareLink);
+    twShare.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent('سلة مشترياتي: ' + shareLink);
+    fbShare.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareLink);
+  };
+
+  window.onload = loadCartFromStorage;
+  </script>
+</body>
+</html>
